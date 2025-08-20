@@ -1,10 +1,9 @@
 from flask import Flask, render_template, request, redirect, session, url_for
 from flask_sqlalchemy import SQLAlchemy
-from flask_bcrypt import Bcrypt
+import bcrypt
 
 app = Flask(__name__)
 app.secret_key = "your_secret_key" # change this to a proper secret key in production
-bcrypt = Bcrypt(app)
 
 
 # configure sql alchemy
@@ -15,18 +14,26 @@ db = SQLAlchemy(app)
 
 # database model ~ single row within our db
 class User(db.Model):
-    # Class variables
+    # class variables
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(25), unique=True, nullable=False)
     password_hash = db.Column(db.String(60), nullable=False)  # bcrypt produces 60-character hashes
+    
 
     def set_password(self, password):
         """hash and set the user's password."""
-        self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+        salt = bcrypt.gensalt(rounds=12)
+        self.password_hash = bcrypt.hashpw(
+            password.encode('utf-8'),
+            salt
+        ).decode('utf-8')
 
     def check_password(self, password):
         """check if provided password matches the hash."""
-        return bcrypt.check_password_hash(self.password_hash, password)
+        return bcrypt.checkpw(
+            password.encode('utf-8'),
+            self.password_hash.encode('utf-8')
+        )
     
 
 # routes

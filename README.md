@@ -32,7 +32,7 @@ The goal is to build a solid foundation in web security concepts before moving o
 - **Frontend**: HTML5, CSS3, JavaScript
 - **Styling**: Custom CSS with modern design patterns
 
-## ecurity Considerations
+## Security Considerations
 
 ### Why Bcrypt?
 This app uses **bcrypt** for password hashing instead of simpler alternatives because:
